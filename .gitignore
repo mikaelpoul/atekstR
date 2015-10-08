@@ -1,3 +1,7 @@
+# R stuff
 .Rproj.user
 .Rhistory
 .RData
+
+# Ignore temp files
+*~

@@ -3,6 +3,6 @@ Title: Parse and import .txt-files from Atekst
 Version: 1.0.0.9000
 Authors@R: person("Mikael Poul", "Johannesson", email = "mikajoh@gmail.com", role = c("aut", "cre"))
 Description: Parse and import .txt-files from Atekst online search.
-Depends: R (>= 3.1.0)
-License: GPL v2.0
+Depends: R (>= 3.1.0), foreach, iterators, doParallel, parallel
+License: GPL (>= 2)
 LazyData: true

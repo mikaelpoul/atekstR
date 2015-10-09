@@ -12,15 +12,17 @@ read.atekst <- function(file, object = FALSE) {
     if (!object) {
         file <- readLines(file, skipNul = TRUE, encoding = "latin1")
     }
+    file <- enc2utf8(file)
+    Encoding(file) <- "UTF-8"
     
     ## Extract each article
     splits <- grep("==============================================================================", file)
     articles <- lapply(0:length(splits), function(x) {
         if (x == 0) {  # for first article
             article <- file[(grep("------------------------------------------------------------------------------", file)[1] - 6):(splits[1] - 1)]
-        } else if (x == length(splits)) {
+        } else if (x == length(splits)) { # for last
             article <- file[(splits[x] + 2):(length(file) - 1)]
-        } else {  # for last
+        } else {  
             article <- file[(splits[x] + 2):(splits[x + 1] - 1)]
         }
         return(article)

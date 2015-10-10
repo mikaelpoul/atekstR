@@ -4,20 +4,24 @@
 \alias{read.atekst.dir}
 \title{Parse all atekst .txt files in an directory}
 \usage{
-read.atekst.dir(dir, recursive = TRUE, cores = 1)
+read.atekst.dir(dir, recursive = TRUE, strict = TRUE, cores = 1)
 }
 \arguments{
-\item{dir}{Path to the directory}
+\item{dir}{Directory containing atekst .txt files.}
 
-\item{recursive}{Should it go through all subfolders?}
+\item{recursive}{If \code{TRUE}, the function also parses files within subfolders.}
 
-\item{cores}{How many cores (i.e. parallel processes) do you wish to use?}
+\item{strict}{If \code{TRUE}, the function only parses .txt files with filenames starting with "Utvalgte_dokumenter".}
+
+\item{cores}{The amount of cores (i.e. parallel processes) that should be utilized.}
 }
 \description{
-This function allows you to parse all atekst-style .txt files in an directory. The function returns a data frame with the headline, paper, data, section (if any) and main text.
+This function allows you to parse all .txt files downloaded from atekst within a directory (including subfolders). If \code{strict == TRUE} it only tries to parse .txt-files starting with "Utvalgte_dokumenter", otherwise it will try to parse all .txt-files it can find. It is recommended that the directory only contains .txt-files downloaded from Atekst. The function returns a data frame with the headline, paper, date, time, mode (net/print), url, and text for each article. In order to save time when working with large corpuses it is recommended to run the function once and save the resulting data frame as a \code{RData}-file (using \code{save()}). That way it can be loaded (using \code{load()}) into R in a fraction of the time it takes to parse the whole corpus.
 }
 \examples{
-read.atekst.dir()
+corpus <- read.atekst.dir("some/directory")
+save(corpus, file = "atekst-corpus.RData")
 }
 \keyword{atekst}
+\keyword{parse}
 

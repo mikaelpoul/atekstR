@@ -1,8 +1,9 @@
 Package: parseAtekst
-Title: Parse and import .txt-files from Atekst
-Version: 1.0.0.9000
+Title: Parse and import articles bundled in .txt-files downloaded from ATEKST
+Version: 1.1
 Authors@R: person("Mikael Poul", "Johannesson", email = "mikajoh@gmail.com", role = c("aut", "cre"))
-Description: Parse and import .txt-files from Atekst online search.
-Depends: R (>= 3.1.0), foreach, iterators, doParallel, parallel
+Description: The Retriever (http://www.retriever-info.com/) online Norwegian media archive ATEKST (C) allows researchers to search through their media archive and download news articles based on that search. Typically one can download up to 100 articles at a time bundled together within a .txt-file. This R-package provides functions for parsing .txt-files downloaded from ATEKST that extracts all articles and imports them into R. The functions return a data frame with the headline, paper, date and time of publication, mode (net vs print), url and text of each news article.
+Depends: R (>= 3.0.0), foreach, iterators, doParallel, parallel
 License: GPL (>= 2)
 LazyData: true
+

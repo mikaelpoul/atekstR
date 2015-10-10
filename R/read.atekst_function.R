@@ -1,17 +1,15 @@
 #' Parse an atekst .txt file
 #'
-#' This function allows you to parse an atekst .txt-file. The function returns a data frame with the headline, paper, data, section (if any) and main text.
-#' @param file Path to atekst .txt-file. Can also be an object (i.e., already read with readLines() if object = TRUE.
-#' @param object If have already read the file with readLines() and wish to feed the parser an R object instead, then object should be TRUE.
+#' This function allows you to parse an atekst .txt-file. The function returns a data frame with the headline, paper, date, time, mode (net/print), url, and text for each article..
+#' @param file Path to a .txt-file downloaded from atekst. Typically called something like "Utvalgte_dokumenter-100-01.01.2015.txt".
 #' @keywords parse atekst
 #' @export
 #' @examples
-#' read.atekst()
+#' corpus <- read.atekst("Utvalgte_dokumenter-100-01.01.2015.txt")
+#' save(corpus, file = "atekst-corpus.RData")
 
-read.atekst <- function(file, object = FALSE) {
-    if (!object) {
-        file <- readLines(file, skipNul = TRUE, encoding = "latin1")
-    }
+read.atekst <- function(file) {
+    file <- readLines(file, skipNul = TRUE, encoding = "latin1")
     file <- enc2utf8(file)
     Encoding(file) <- "UTF-8"
     
@@ -28,33 +26,17 @@ read.atekst <- function(file, object = FALSE) {
         return(article)
     })
 
-    ## Parse each article in turn
+    ## Then parse each article in turn
     allList <- lapply(articles, function(art) {
 
         ## headline
         headline <- art[grep("------------------------------------------------------------------------------", art)-2]
-
-        ## paper/date
-        ##        noPaper <- TRUE
-        ##        x <- grep("------------------------------------------------------------------------------", art)[1]
-        ##        while(noPaper) {
-        ##            x <- x + 1
-        ##            if (x == (length(art) + 1)) {
-        ##                break
-        ##            }
-        ##            if (grepl(", [0-9][0-9].[0-9][0-9].[0-9][0-9][0-9]", art[x])) {
-        ##                
-        ##                paper <- sub("(,*),.*", "\\1", art[x])
-        ##                date <- sub(".*, (.*)", "\\1", art[x])
-        ##                noPaper <- FALSE
-        ##            }
-        ##        }
         
         ## paper
         paperLine <- grep(", [0-9][0-9].[0-9][0-9].[0-9][0-9][0-9]", art)[1]
         paper <- sub("(,*),.*", "\\1", art[paperLine])
 
-        ## date
+        ## date/time
         dateRaw <- sub(".*, (.*)", "\\1", art[paperLine])
         dateRaw <- strsplit(dateRaw, " ")[[1]]
         date <- dateRaw[1]
@@ -63,26 +45,9 @@ read.atekst <- function(file, object = FALSE) {
             time <- dateRaw[2]
         }
         
-        ## section:
-        ##        noSec <- TRUE
-        ##section <- NA
-        ##        sStop <- grep("Publisert på ", art)[1]
-        ##        x <- grep("------------------------------------------------------------------------------", art)[1]
-        ##        while(noSec) {
-        ##            x <- x + 1
-        ##            if (x == sStop) {
-        ##                break
-        ##            }
-        ##            if (any(grepl("Seksjon: ", art[x]) | grepl("SEKSJON:", art[x]))) {
-        ##                section <- strsplit(sub("^.*: *(.*)", "\\1", art[x]), " ")[[1]][[1]]
-        ##                noSec <- FALSE
-        ##            }
-        ##        }
-
         ## mode/url
-        ##startsy <- grep("Publisert på", art)[1] + 1
-        startsy <- grep("Publisert p", art)[1] + 1
-        if (grepl("nett", art[startsy - 1])) {
+        starting <- grep("Publisert p", art)[1] + 1
+        if (grepl("nett", art[starting - 1])) {
             mode <- "net"
             urlLine <- grep("Se webartikkelen p", art)
             url <- sub("Se webartikkelen p. (.*)$", "\\1", art[urlLine[length(urlLine)]])
@@ -91,13 +56,11 @@ read.atekst <- function(file, object = FALSE) {
               url <- NA
         }
         
-        ## main text        
-        ##stopsy <- length(art) - 4
-        ##stopsy <- grep("©", art)
+        ## main text (as "main")
         FoundEnd <- FALSE
         firstRound <- FALSE
         x <- length(art) + 1
-        if (mode == "paper") {
+        if (mode == "paper") {  # a slow but safe way to find the end of the main text
             while(!FoundEnd) {
                 x <- x - 1
                 if (grepl("[A-Za-z]", art[x])) {
@@ -118,16 +81,13 @@ read.atekst <- function(file, object = FALSE) {
                 }
             }
         }
-        stopsy <- x - 1
-        ##stopsy <- grep(paper, art)
-        ##stopsy <- stopsy[length(stopsy)]
-        ##stopsy <- stopsy - 1
-        main <- art[startsy:stopsy]
+        stopping <- x - 1
+        main <- art[starting:stopping]
         main <- gsub("  ", " ", paste(main, collapse = " "))
         main <- gsub("  ", " ", main)  # remove (usually) the last of double-spaces
         main <- sub(" *(.*) $", "\\1", main)  # remove spaces at the beginning and end of text
 
-        ## safty pitstop
+        ## Sometimes it carries more than one vector per element, screwing things up
         headline <- as.character(headline)[1]
         paper <- as.character(paper)[1]
         date <- as.character(date)[1]
@@ -143,7 +103,6 @@ read.atekst <- function(file, object = FALSE) {
                     "mode" = mode,
                     "url" = url,
                     "text" = main))
-        ##return(c(headline, paper, date, section, main))
     })
     
     out <- data.frame("headline" = sapply(1:length(allList), function(x) return(allList[[x]]$headline)),
@@ -152,18 +111,7 @@ read.atekst <- function(file, object = FALSE) {
                       "time" = sapply(1:length(allList), function(x) return(allList[[x]]$time)),
                       "mode" = sapply(1:length(allList), function(x) return(allList[[x]]$mode)),
                       "url" = sapply(1:length(allList), function(x) return(allList[[x]]$url)),
-                      ##"section" = sapply(1:length(allList), function(x) return(allList[[x]]$section)),
                       "text" = sapply(1:length(allList), function(x) return(allList[[x]]$text)))
-    if (ncol(out) != 7) {
-        out <- data.frame("headline" = "FAIL",
-                          "paper" = "FAIL",
-                          "date" = "FAIL",
-                          "time" = "FAIL",
-                          "mode" = "FAIL",
-                          "url" = "FAIL",
-                          ##"section" = "FAIL",
-                          "text" = "FAIL")
-    }
     
     out$headline <- as.character(out$headline)
     out$paper <- as.character(out$paper)
@@ -171,7 +119,6 @@ read.atekst <- function(file, object = FALSE) {
     out$time <- as.character(out$time)
     out$mode <- as.character(out$mode)
     out$url <- as.character(out$url)
-    ##out$section <- as.character(out$section)
     out$text <- as.character(out$text) 
     return(out)
 }

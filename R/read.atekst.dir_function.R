@@ -33,9 +33,9 @@ read.atekst.dir <- function(dir, recursive = TRUE, strict = TRUE, cores = 1) {
     
     ## Import file list and parse
     if (strict) {
-        files  <- list.files(path = dir, recursive = recursive, pattern = paste("^Utvalgte_dokumenter*.txt$", sep = ""), full.names = TRUE)
+        files  <- list.files(path = dir, recursive = recursive, pattern = "^Utvalgte_dokumenter.*.txt$", full.names = TRUE)
     } else {
-        files  <- list.files(path = dir, recursive = recursive, pattern = paste("*.txt$", sep = ""), full.names = TRUE)
+        files  <- list.files(path = dir, recursive = recursive, pattern = "*.txt$", full.names = TRUE)
     }
     out <- foreach(file = files, .combine = rbind, .inorder = FALSE, .packages = "parseAtekst") %dopar% {
         corpus <- read.atekst(file)

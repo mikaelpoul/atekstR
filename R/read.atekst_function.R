@@ -49,7 +49,7 @@ read.atekst <- function(file, object = FALSE) {
         ##                noPaper <- FALSE
         ##            }
         ##        }
-
+        
         ## paper
         paperLine <- grep(", [0-9][0-9].[0-9][0-9].[0-9][0-9][0-9]", art)[1]
         paper <- sub("(,*),.*", "\\1", art[paperLine])
@@ -80,21 +80,48 @@ read.atekst <- function(file, object = FALSE) {
         ##        }
 
         ## mode/url
-        startsy <- grep("Publisert på", art)[1] + 1
+        ##startsy <- grep("Publisert på", art)[1] + 1
+        startsy <- grep("Publisert p", art)[1] + 1
         if (grepl("nett", art[startsy - 1])) {
             mode <- "net"
-            urlLine <- grep("Se webartikkelen på ", art)
-            url <- sub("Se webartikkelen på (.*)$", "\\1", art[urlLine[length(urlLine)]])
+            urlLine <- grep("Se webartikkelen p", art)
+            url <- sub("Se webartikkelen p. (.*)$", "\\1", art[urlLine[length(urlLine)]])
         } else {
               mode <- "print"
               url <- NA
-          }
-        ## main text
+        }
         
+        ## main text        
         ##stopsy <- length(art) - 4
-        stopsy <- grep("©", art)
-        stopsy <- stopsy[length(stopsy)]
-        stopsy <- stopsy - 1
+        ##stopsy <- grep("©", art)
+        FoundEnd <- FALSE
+        firstRound <- FALSE
+        x <- length(art) + 1
+        if (mode == "paper") {
+            while(!FoundEnd) {
+                x <- x - 1
+                if (grepl("[A-Za-z]", art[x])) {
+                    FoundEnd <- TRUE
+                }
+            }
+        } else {
+            while(!FoundEnd) {
+                x <- x - 1
+                if (firstRound) {
+                    if (grepl("[A-Za-z]", art[x])) {
+                        FoundEnd <- TRUE
+                    }
+                } else {
+                    if (grepl("[A-Za-z]", art[x])) {
+                        firstRound <- TRUE
+                    }
+                }
+            }
+        }
+        stopsy <- x - 1
+        ##stopsy <- grep(paper, art)
+        ##stopsy <- stopsy[length(stopsy)]
+        ##stopsy <- stopsy - 1
         main <- art[startsy:stopsy]
         main <- gsub("  ", " ", paste(main, collapse = " "))
         main <- gsub("  ", " ", main)  # remove (usually) the last of double-spaces

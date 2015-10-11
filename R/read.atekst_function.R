@@ -60,7 +60,7 @@ read.atekst <- function(file) {
         FoundEnd <- FALSE
         firstRound <- FALSE
         x <- length(art) + 1
-        if (mode == "paper") {  # a slow but safe way to find the end of the main text
+        if (mode == "print") {  # a slow but safe way to find the end of the main text
             while(!FoundEnd) {
                 x <- x - 1
                 if (grepl("[A-Za-z]", art[x])) {

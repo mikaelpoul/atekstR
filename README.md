@@ -1,4 +1,4 @@
-## parseAtekst: An R package for extracting articles (with metadata) from .txt-files downloaded from [Retriever](http://www.retriever-info.com)'s online Norwegian media archive [ATEKST](http://www.retriever-info.com/no/category/news-archive/).
+## parseAtekst: An R package for extracting articles from .txt-files downloaded from [ATEKST](http://www.retriever-info.com/no/category/news-archive/)
 
 See the [**documentation**](https://github.com/mikaelpoul/parseAtekst/raw/master/docs/parseAtekst-docs-v1.1.pdf).
 

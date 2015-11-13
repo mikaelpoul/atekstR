@@ -7,10 +7,10 @@
 read.atekst(file)
 }
 \arguments{
-\item{file}{Path to a .txt-file downloaded from atekst. Typically called something like "Utvalgte_dokumenter-100-01.01.2015.txt".}
+\item{file}{Path to a .txt-file downloaded from atekst. Typically called something like "\code{Utvalgte_dokumenter-100-01.01.2015.txt}".}
 }
 \description{
-This function allows you to parse an atekst .txt-file. The function returns a data frame with the headline, paper, date, time, mode (net/print), url, and text for each article..
+Parses an atekst .txt-file. The function returns a data frame with the headline, paper, date, time, mode (net/print), url, and text for each article.
 }
 \examples{
 corpus <- read.atekst("Utvalgte_dokumenter-100-01.01.2015.txt")

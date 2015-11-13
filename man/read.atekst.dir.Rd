@@ -2,21 +2,24 @@
 % Please edit documentation in R/read.atekst.dir_function.R
 \name{read.atekst.dir}
 \alias{read.atekst.dir}
-\title{Parse all atekst .txt files in an directory}
+\title{Parse all atekst .txt files in a directory}
 \usage{
-read.atekst.dir(dir, recursive = TRUE, strict = TRUE, cores = 1)
+read.atekst.dir(dir, recursive = TRUE,
+  regex = "^Utvalgte_dokumenter.*.txt$", parallel = FALSE, cores = 1)
 }
 \arguments{
 \item{dir}{Directory containing atekst .txt files.}
 
 \item{recursive}{If \code{TRUE}, the function also parses files within subfolders.}
 
-\item{strict}{If \code{TRUE}, the function only parses .txt files with filenames starting with "Utvalgte_dokumenter".}
+\item{regex}{Regular expression (pattern) to use for selecting files to parse.}
 
-\item{cores}{The amount of cores (i.e. parallel processes) that should be utilized.}
+\item{parallel}{If \code{TRUE} it will try to do it in parallel (using the packages \code{foreach}, \code{iterators}, \code{doParallel} and \code{parallel}).}
+
+\item{cores}{The amount of cores to use (if \code{parallel} is \code{TRUE}).}
 }
 \description{
-This function allows you to parse all .txt files downloaded from atekst within a directory (including subfolders). If \code{strict == TRUE} it only tries to parse .txt-files starting with "Utvalgte_dokumenter", otherwise it will try to parse all .txt-files it can find. It is recommended that the directory only contains .txt-files downloaded from Atekst. The function returns a data frame with the headline, paper, date, time, mode (net/print), url, and text for each article. In order to save time when working with large corpuses it is recommended to run the function once and save the resulting data frame as a \code{RData}-file (using \code{save()}). That way it can be loaded (using \code{load()}) into R in a fraction of the time it takes to parse the whole corpus.
+Parse all .txt files downloaded from atekst within a directory (including subfolders). It can use a pattern (regex) to identify files. The function returns a data frame with the headline, paper, date, time, mode (net/print), url, and text for each article. In order to speed it up it is possible to run it in parallel by setting \code{parallel} to \code{TRUE} and setting \code{cores}. When working with large corpuses it is recommended to run the function once and save the resulting data frame as a \code{.RData}-file. That way it can be loaded (using \code{load()}) into R in a fraction of the time it takes to parse the whole corpus.
 }
 \examples{
 corpus <- read.atekst.dir("some/directory")

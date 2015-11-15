@@ -2,7 +2,7 @@ Package: parseAtekst
 Title: Parse and import articles bundled in .txt-files downloaded from ATEKST
 Version: 1.2
 Authors@R: person("Mikael Poul", "Johannesson", email = "mikajoh@gmail.com", role = c("aut", "cre"))
-Description: This R-package provides functions for parsing .txt-files downloaded from ATEKST that imports individual articles (with metadata) into R. They return a data frame with the headline, paper, date and time of publication, mode (net vs print), url and text of each news article.
+Description: This R-package provides functions for extracting articles (with metadata) from .txt-files downloaded from ATEKST and import them into R. They return a data frame with the headline, paper, date and time of publication, mode (net vs print), url and text of each news article.
 Depends: R (>= 3.0.0), foreach, iterators, doParallel, parallel
 License: GPL (>= 2)
 LazyData: true

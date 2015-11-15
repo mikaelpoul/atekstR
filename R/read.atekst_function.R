@@ -30,7 +30,7 @@ read.atekst <- function(file) {
     allList <- lapply(articles, function(art) {
 
         ## headline
-        headline <- art[grep("------------------------------------------------------------------------------", art)-2]
+        headline <- art[grep("------------------------------------------------------------------------------", art) - 2]
 
         ## paper
         paperLine <- grep(", [0-9][0-9].[0-9][0-9].[0-9][0-9][0-9]", art)[1]
@@ -54,35 +54,25 @@ read.atekst <- function(file) {
               url <- NA
         }
 
-        ## main text (as "main")
-        FoundEnd <- FALSE
-        firstRound <- FALSE
-        x <- length(art) + 1
-        if (mode == "print") {  # a slow but safe way to find the end of the main text
-            while(!FoundEnd) {
-                x <- x - 1
-                if (grepl("[A-Za-z]", art[x])) {
-                    FoundEnd <- TRUE
-                }
-            }
+        ## body text (as "main")
+        if (mode == "print") {
+            x <- length(art) + 1
         } else {
-            while(!FoundEnd) {
-                x <- x - 1
-                if (firstRound) {
-                    if (grepl("[A-Za-z]", art[x])) {
-                        FoundEnd <- TRUE
-                    }
-                } else {
-                    if (grepl("[A-Za-z]", art[x])) {
-                        firstRound <- TRUE
-                    }
-                }
-            }
+            x <- urlLine
         }
-        stopping <- x - 1
-        main <- paste(art[starting:stopping], collapse = " ")
+
+        foundEnd <- FALSE
+        while(!foundEnd) {  # a relatively slow but safe way to find the end of the main text
+            x <- x - 1
+            if (grepl("[A-Za-z]", art[x])) {
+                    foundEnd <- TRUE
+                    if (grepl("Les hele nyheten p", art[x])) foundEnd <- FALSE
+                }
+        }
+
+        main <- paste(art[starting:(x - 1)], collapse = " ")  # x = last line w/o body text
         main <- gsub("\\s+", " ", main)  # remove multiple spaces
-        main <- sub("\\s+|\\s+$", "", main) # and leading/trailing spaces
+        main <- sub("\\s*|\\s*$", "", main)  # and leading/trailing spaces
 
         ## Sometimes it carries more than one vector per element, screwing things up
         headline <- as.character(headline)[1]
@@ -94,12 +84,12 @@ read.atekst <- function(file) {
         main <- as.character(main)[1]
 
         return(data.frame("headline" = headline,
-                    "paper" = paper,
-                    "date" = date,
-                    "time" = time,
-                    "mode" = mode,
-                    "url" = url,
-                    "text" = main))
+                          "paper" = paper,
+                          "date" = date,
+                          "time" = time,
+                          "mode" = mode,
+                          "url" = url,
+                          "text" = main))
     })
 
     out <- do.call("rbind", allList)

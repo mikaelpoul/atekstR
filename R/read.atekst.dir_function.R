@@ -13,6 +13,9 @@
 #' save(corpus, file = "atekst-corpus.RData")
 
 read.atekst.dir <- function(dir, recursive = TRUE, regex = "^Utvalgte_dokumenter.*.txt$", parallel = FALSE, cores = 1) {
+    files  <- list.files(path = gsub("^/+", "", dir), recursive = recursive, pattern = regex, full.names = TRUE)
+    if (length(files) == 0) stop("Unable to find any files.")
+    
     if (parallel) {
         require(foreach, quietly = TRUE)
         require(iterators, quietly = TRUE)
@@ -32,13 +35,7 @@ read.atekst.dir <- function(dir, recursive = TRUE, regex = "^Utvalgte_dokumenter
         }
         cl <- makeCluster(cores)
         registerDoParallel(cl)
-    }
 
-    ## Import file list and parse
-    files  <- list.files(path = gsub("^/+", "", dir), recursive = recursive, pattern = regex, full.names = TRUE)
-    if (length(files) == 0) stop("Unable to find any files.")
-
-    if (parallel) {
         out <- foreach(file = files, .combine = rbind, .inorder = FALSE, .packages = "parseAtekst") %dopar% {
             corpus <- read.atekst(file)
             corpus$filepath <- file
@@ -47,6 +44,7 @@ read.atekst.dir <- function(dir, recursive = TRUE, regex = "^Utvalgte_dokumenter
             return(corpus)
         }
         stopCluster(cl)
+        
     } else {
         out <- lapply(files, function(file) {
                           corpus <- parseAtekst::read.atekst(file)

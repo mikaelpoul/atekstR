@@ -1,4 +1,4 @@
-Package: parseAtekst
+Package: atekstR
 Title: Parse and import articles bundled in .txt-files downloaded from ATEKST
 Version: 1.2
 Authors@R: person("Mikael Poul", "Johannesson", email = "mikajoh@gmail.com", role = c("aut", "cre"))

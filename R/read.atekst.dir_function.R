@@ -47,7 +47,7 @@ read.atekst.dir <- function(dir, recursive = TRUE, regex = "^Utvalgte_dokumenter
         
     } else {
         out <- lapply(files, function(file) {
-                          corpus <- parseAtekst::read.atekst(file)
+                          corpus <- atekstR::read.atekst(file)
                           corpus$filepath <- file
                           corpus$filepath <- as.character(corpus$filepath)
                           corpus$filename <- sub("^.*/(.*)$", "\\1", corpus$filepath)

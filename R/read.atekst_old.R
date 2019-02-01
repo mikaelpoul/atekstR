@@ -10,7 +10,7 @@
 #' save(corpus, file = "atekst-corpus.RData")
 #' }
 
-read.atekst <- function(file) {
+read.atekst.old <- function(file) {
   file <- readLines(file, skipNul = TRUE, encoding = "latin1", warn = FALSE)
   file <- enc2utf8(file)
   Encoding(file) <- "UTF-8"
@@ -18,10 +18,8 @@ read.atekst <- function(file) {
   ## Extract each article
   splits <- grep("==============================================================================", file)
   articles <- lapply(0:length(splits), function(x) {
-    if (x == 0) {  # for first article        
-      first_lwr <- max(grep("^> .*$", file[1:(splits[1] - 1)])) + 2
-      first_upr <- splits[1] - 1
-      article <- file[first_lwr:first_upr]
+    if (x == 0) {  # for first article
+      article <- file[(grep("------------------------------------------------------------------------------", file)[1] - 6):(splits[1] - 1)]
     } else if (x == length(splits)) { # for last
       article <- file[(splits[x] + 2):(length(file) - 1)]
     } else {
@@ -34,7 +32,7 @@ read.atekst <- function(file) {
   allList <- lapply(articles, function(art) {
 
     ## headline
-    headline <- art[min(which(art != ""))]
+    headline <- art[grep("------------------------------------------------------------------------------", art) - 2]
 
     ## paper
     paperLine <- grep(", [0-9][0-9].[0-9][0-9].[0-9][0-9][0-9]", art)[1]
@@ -87,15 +85,13 @@ read.atekst <- function(file) {
     url <- as.character(url)[1]
     main <- as.character(main)[1]
 
-    data.frame(
-      headline = headline,
-      paper = paper,
-      date = date,
-      time = time,
-      mode = mode,
-      url = url,
-      text = main
-    )
+    return(data.frame("headline" = headline,
+                      "paper" = paper,
+                      "date" = date,
+                      "time" = time,
+                      "mode" = mode,
+                      "url" = url,
+                      "text" = main))
   })
 
   out <- do.call("rbind", allList)

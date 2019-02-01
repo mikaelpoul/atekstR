@@ -4,14 +4,15 @@
 #' @param dir Directory containing atekst .txt files.
 #' @param recursive If \code{TRUE}, the function also parses files within subfolders.
 #' @param regex Regular expression (pattern) to use for selecting files to parse.
-#' @param parallel If \code{TRUE} it will try to do it in parallel (using the packages \code{foreach}, \code{iterators}, \code{doParallel} and \code{parallel}).
+#' @param parallel If \code{TRUE} it will try to do it in parallel (using the packages \code{foreach}, \code{iterators}, \code{doParallegnome l} and \code{parallel}).
 #' @param cores The amount of cores to use (if \code{parallel} is \code{TRUE}).
 #' @keywords parse atekst
 #' @export
 #' @examples
+#'\dontrun{
 #' corpus <- read.atekst.dir("some/directory")
 #' save(corpus, file = "atekst-corpus.RData")
-
+#' }
 read.atekst.dir <- function(dir, recursive = TRUE, regex = "^Utvalgte_dokumenter.*.txt$", parallel = FALSE, cores = 1) {
     files  <- list.files(path = gsub("^/+", "", dir), recursive = recursive, pattern = regex, full.names = TRUE)
     if (length(files) == 0) stop("Unable to find any files.")

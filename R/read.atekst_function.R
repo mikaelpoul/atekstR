@@ -45,7 +45,7 @@ read.atekst <- function(file) {
     dateRaw <- strsplit(dateRaw, " ")[[1]]
     date <- dateRaw[1]
     time <- NA
-    if (length(dateRaw) == 2) time <- dateRaw[2]
+    if (length(dateRaw) >= 2) time <- dateRaw[2]
 
     ## mode/url
     starting <- grep("Publisert p", art)[1] + 1
